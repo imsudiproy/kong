@@ -331,6 +331,15 @@ local function path_val_transform(op, p)
 end
 
 
+-- Generates an ATC router expression for traditional compat router flavor
+-- match priority for http is as follows:
+-- (sni if net.protocol == https) -> net.src.ip -> net.src.port
+--   -> net.dst.ip -> net.dst.port -> http.path -> http.headers
+--   -> http.host -> http.method
+--
+-- match priority for stream is as follows:
+-- (sni if net.protocol == tls) -> net.src.ip -> net.src.port
+--   -> net.dst.ip -> net.dst.port
 local function get_expression(route)
   -- we prefer the field 'expression', reject others
   if not is_null(route.expression) then
